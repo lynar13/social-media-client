@@ -1,7 +1,19 @@
-import { logout } from '/src/js/api/auth/logout.js';
+import { logout } from './logout';
+import { remove } from '../../storage/index';
 
-test('logout function clears the token from browser storage', () => {
-    localStorage.setItem('token', '123456');
-    logout();
-    expect(localStorage.getItem('token')).toBeNull();
+jest.mock('../../storage/index', () => ({
+  remove: jest.fn(),
+}));
+
+describe('logout function', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
+
+  test('should remove token and profile from storage on logout', () => {
+    logout();
+
+    expect(remove).toHaveBeenCalledWith('token');
+    expect(remove).toHaveBeenCalledWith('profile');
+  });
+});
